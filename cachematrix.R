@@ -1,14 +1,18 @@
 ## makeCacheMatrix takes a matrix as input and returns a makeCacheMatrix
-## object.  This returned object contains functions that allow the
-## original matrix to be:
-##    set: - replaced with a new matrix
-##    get: - returned
-##    setinverse: - an inverse matrix to be set
-##    getinverse: - an inverse matrix to be returne
+## object.  This returned object contains functions that allow the following:
+##
+##    set: - set a new matrix
+##    get: - return matrix
+##    setinverse: - set a new inverse matrix
+##    getinverse: - return inverse matrix
+##
 ## This object works in conjunction with cacheSolve.
 ## 
-## Note: cacheSolve must be called prior to getinverse as this is
-## written.
+## Note: cacheSolve must be called prior to getinverse or a NULL
+## is returned.
+##
+##  x - matrix
+##  m - matrix inverse, NULL until cacheSolve is called
 
 makeCacheMatrix <- function(x = matrix()) {
   m <- NULL
@@ -35,13 +39,15 @@ makeCacheMatrix <- function(x = matrix()) {
 ## value making it available for future cached retrievals.
 
 cacheSolve <- function(x, ...) {
-  m <- x$getinverse()
-  if(!is.null(m)) {
+  m <- x$getinverse()         ## retrieve cached inverse
+  if(!is.null(m)) {           ## if cached inverse exists, return it
     message ("getting cached data")
     return(m)
   }
-  data <- x$get()
-  m <- solve(data, ...)
-  x$setinverse(m)
-  m
+  ## generate inverse
+  data <- x$get()         ## get matrix
+  m <- solve(data, ...)   ## calculate inverse
+  x$setinverse(m)         ## store inverse
+  
+  m                       ## return inverse
 }
